@@ -68,8 +68,8 @@ public class EmergencyVehicle {
     public void increaseAvailability(int number){
         availability= availability+number;
     }
-    public void decreaseAvailability(){
-        availability--;
+    public void decreaseAvailability(int number){
+        availability = availability-number;
     }
     public String toString() {
         return "Vehicle Info: [vehicleType=" + vehicleType + ", zipcode=" + zipCode + ", " +

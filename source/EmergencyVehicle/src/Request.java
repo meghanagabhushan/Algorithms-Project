@@ -12,7 +12,7 @@ import java.util.List;
         public static void main(String[] args) throws IOException{
             int requestType = 2;
             int zipcode = 64118;
-            int number = 4;
+            int number = 2;
             requestVehicle(requestType,zipcode,number);
 
 
@@ -30,7 +30,7 @@ import java.util.List;
             for(EmergencyVehicle e : vehicleObj){
                 System.out.println(e.vehicleID);
                 if(e.vehicleType == requestType && e.zipCode==zipcode && e.availability>=number){
-                    e.decreaseAvailability();
+                    e.decreaseAvailability(number);
                     System.out.println(e);
                     e.scheduleRelease(number);
                     //e.release();
