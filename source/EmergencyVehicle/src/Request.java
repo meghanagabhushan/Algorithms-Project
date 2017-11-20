@@ -1,8 +1,6 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -10,14 +8,6 @@ import java.util.List;
      */
     public class Request {
         public static void main(String[] args) throws IOException{
-            int requestType = 2;
-            int zipcode = 64118;
-            int number = 2;
-            requestVehicle(requestType,zipcode,number);
-
-
-        }
-        public static void requestVehicle(int requestType,int zipcode,int number) throws IOException {
             List<EmergencyVehicle> vehicleObj = new ArrayList<>();
             File distanceFile = new File("./data/EmergencyVehicle.csv");
             BufferedReader br = new BufferedReader(new FileReader(distanceFile));
@@ -27,16 +17,37 @@ import java.util.List;
                 EmergencyVehicle emergencyVehicles = createEmergencyVehicle(attributes);
                 vehicleObj.add(emergencyVehicles);
             }
-            for(EmergencyVehicle e : vehicleObj){
-                System.out.println(e.vehicleID);
-                if(e.vehicleType == requestType && e.zipCode==zipcode && e.availability>=number){
-                    e.decreaseAvailability(number);
-                    System.out.println(e);
-                    e.scheduleRelease(number);
-                    //e.release();
-                    //System.out.println("Next Line");
-                    System.out.println(e);
+            br.close();
 
+            List<RequestVehicle> requestObj = new ArrayList<>();
+            File reqFile = new File("./data/TableRequest.csv");
+            BufferedReader breader = new BufferedReader(new FileReader(reqFile));
+            String line1="";
+            while ((line1 = breader.readLine()) != null) {
+                String[] lines = line1.split(",");
+                RequestVehicle requestVehicles = createRequestVehicle(lines);
+                requestObj.add(requestVehicles);
+            }
+            breader.close();
+
+           for(RequestVehicle r : requestObj){
+                System.out.println("VehicleType: " + r.vehicleType);
+                System.out.println("ZipCode: " + r.zipCode);
+                requestVehicle(r.vehicleType,r.zipCode, vehicleObj);
+            }
+
+
+
+        }
+        public static void requestVehicle(int requestType, int zipcode, List<EmergencyVehicle> vehicleObj) throws IOException {
+
+            for(EmergencyVehicle e : vehicleObj){
+                //System.out.println(e.vehicleID);
+                if(e.vehicleType == requestType && e.zipCode==zipcode && e.availability>0){
+                    e.decreaseAvailability();
+                    System.out.println(e);
+                    e.scheduleRelease();
+                    System.out.println(e);
                     break;
                 }
                 else if(e.vehicleType == requestType && e.zipCode==zipcode && e.availability == 0){
@@ -48,7 +59,7 @@ import java.util.List;
                 else
                     continue;
             }
-            br.close();
+
         }
 
         private static EmergencyVehicle createEmergencyVehicle(String[] attributes) {
@@ -58,6 +69,14 @@ import java.util.List;
             int availability = Integer.parseInt(attributes[3]);
 
             return new EmergencyVehicle(vehicleID,zipCode,vehicleType,availability);
+        }
+
+         private static RequestVehicle createRequestVehicle(String[] lines) {
+             //String s = String.lines[0];
+             int vehicleType = Integer.parseInt(lines[0]);
+             int zipCode = Integer.parseInt(lines[1]);
+
+             return new RequestVehicle(vehicleType, zipCode);
         }
 
     }
