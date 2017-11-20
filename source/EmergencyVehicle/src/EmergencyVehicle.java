@@ -19,20 +19,13 @@ public class EmergencyVehicle {
                     public void run() {
                         // your code here
                         increaseAvailability(number);
-                        //System.out.println("Availability: "+availability);
+                        System.out.println("New Availability: "+availability);
                     }
                 },
-                1000
+                10
         );
     }
-    public void release(int number) {
-        try {
-            Thread.sleep(1000);
-            increaseAvailability(number);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+
 
     public int getVehicleID() {
         return vehicleID;
@@ -73,7 +66,7 @@ public class EmergencyVehicle {
     }
     public String toString() {
         return "Vehicle Info: [vehicleType=" + vehicleType + ", zipcode=" + zipCode + ", " +
-                "vehicleType=" + vehicleType + ", Availability =" +availability +"]";
+                ", Availability =" +availability +"]";
     }
 
 }

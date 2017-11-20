@@ -1,11 +1,13 @@
 public class RequestVehicle {
     int vehicleType;
     int zipCode;
+    int number;
 
-    public RequestVehicle(int vehicleType, int zipCode) {
+    public RequestVehicle(int vehicleType, int zipCode, int number) {
 
         this.vehicleType = vehicleType;
         this.zipCode = zipCode;
+        this.number = number;
     }
 
     public int getVehicleType() {

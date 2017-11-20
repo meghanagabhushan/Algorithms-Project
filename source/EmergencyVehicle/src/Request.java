@@ -1,6 +1,8 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -9,7 +11,7 @@ import java.util.List;
     public class Request {
         public static void main(String[] args) throws IOException{
             List<EmergencyVehicle> vehicleObj = new ArrayList<>();
-            File distanceFile = new File("./data/EmergencyVehicle.csv");
+            File distanceFile = new File("data/EmergencyVehicle.csv");
             BufferedReader br = new BufferedReader(new FileReader(distanceFile));
             String line="";
             while ((line = br.readLine()) != null) {
@@ -20,7 +22,7 @@ import java.util.List;
             br.close();
 
             List<RequestVehicle> requestObj = new ArrayList<>();
-            File reqFile = new File("./data/TableRequest.csv");
+            File reqFile = new File("data/TableRequest.csv");
             BufferedReader breader = new BufferedReader(new FileReader(reqFile));
             String line1="";
             while ((line1 = breader.readLine()) != null) {
@@ -33,31 +35,36 @@ import java.util.List;
            for(RequestVehicle r : requestObj){
                 System.out.println("VehicleType: " + r.vehicleType);
                 System.out.println("ZipCode: " + r.zipCode);
-                requestVehicle(r.vehicleType,r.zipCode, vehicleObj);
+               System.out.println("Requested Vehicles: " + r.number);
+                requestVehicle(r.vehicleType,r.zipCode, r.number,vehicleObj);
             }
 
 
 
         }
-        public static void requestVehicle(int requestType, int zipcode, List<EmergencyVehicle> vehicleObj) throws IOException {
+        public static void requestVehicle(int requestType, int zipcode, int number,List<EmergencyVehicle> vehicleObj) throws IOException {
 
             for(EmergencyVehicle e : vehicleObj){
                 //System.out.println(e.vehicleID);
-                if(e.vehicleType == requestType && e.zipCode==zipcode && e.availability>0){
-                    e.decreaseAvailability();
-                    System.out.println(e);
-                    e.scheduleRelease();
-                    System.out.println(e);
-                    break;
-                }
-                else if(e.vehicleType == requestType && e.zipCode==zipcode && e.availability == 0){
-                    System.out.println("Calculate Nearest available vehicle distance.");
-                    //int newZipCode = m.calculateDistance();
+                if(e.vehicleType == requestType && e.zipCode==zipcode){
+                    if( e.availability>=number){
+                        e.decreaseAvailability(number);
+                        System.out.println(e);
+                        e.scheduleRelease(number);
+                        System.out.println(e);
+                        break;
+                    }
 
-                    break;
+                    /*else if(e.availability>0){
+
+                    }*/
+
+
                 }
-                else
-                    continue;
+               /* else{
+                    //algorithm part to be added
+                }*/
+
             }
 
         }
@@ -75,8 +82,9 @@ import java.util.List;
              //String s = String.lines[0];
              int vehicleType = Integer.parseInt(lines[0]);
              int zipCode = Integer.parseInt(lines[1]);
+             int number  = Integer.parseInt(lines[2]);
 
-             return new RequestVehicle(vehicleType, zipCode);
+             return new RequestVehicle(vehicleType, zipCode, number);
         }
 
     }
