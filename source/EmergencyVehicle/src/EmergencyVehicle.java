@@ -12,23 +12,23 @@ public class EmergencyVehicle {
         this.availability = availability;
 
     }
-    public void scheduleRelease(){
+    public void scheduleRelease(int number){
         new java.util.Timer().schedule(
                 new java.util.TimerTask() {
                     @Override
                     public void run() {
                         // your code here
-                        increaseAvailability();
+                        increaseAvailability(number);
                         //System.out.println("Availability: "+availability);
                     }
                 },
                 1000
         );
     }
-    public void release() {
+    public void release(int number) {
         try {
             Thread.sleep(1000);
-            increaseAvailability();
+            increaseAvailability(number);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -65,8 +65,8 @@ public class EmergencyVehicle {
     public void setAvailability(int availability) {
         this.availability = availability;
     }
-    public void increaseAvailability(){
-        availability++;
+    public void increaseAvailability(int number){
+        availability= availability+number;
     }
     public void decreaseAvailability(){
         availability--;

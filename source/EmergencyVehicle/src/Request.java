@@ -32,7 +32,7 @@ import java.util.List;
                 if(e.vehicleType == requestType && e.zipCode==zipcode && e.availability>=number){
                     e.decreaseAvailability();
                     System.out.println(e);
-                    e.scheduleRelease();
+                    e.scheduleRelease(number);
                     //e.release();
                     //System.out.println("Next Line");
                     System.out.println(e);
