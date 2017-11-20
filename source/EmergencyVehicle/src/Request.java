@@ -1,6 +1,8 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -10,11 +12,12 @@ import java.util.List;
         public static void main(String[] args) throws IOException{
             int requestType = 2;
             int zipcode = 64118;
-            requestVehicle(requestType,zipcode);
+            int number = 4;
+            requestVehicle(requestType,zipcode,number);
 
 
         }
-        public static void requestVehicle(int requestType,int zipcode) throws IOException {
+        public static void requestVehicle(int requestType,int zipcode,int number) throws IOException {
             List<EmergencyVehicle> vehicleObj = new ArrayList<>();
             File distanceFile = new File("./data/EmergencyVehicle.csv");
             BufferedReader br = new BufferedReader(new FileReader(distanceFile));
@@ -26,7 +29,7 @@ import java.util.List;
             }
             for(EmergencyVehicle e : vehicleObj){
                 System.out.println(e.vehicleID);
-                if(e.vehicleType == requestType && e.zipCode==zipcode && e.availability>0){
+                if(e.vehicleType == requestType && e.zipCode==zipcode && e.availability>=number){
                     e.decreaseAvailability();
                     System.out.println(e);
                     e.scheduleRelease();
