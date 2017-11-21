@@ -10,33 +10,36 @@ import java.util.List;
      */
     public class Request {
         public static void main(String[] args) throws IOException{
-            List<EmergencyVehicle> vehicleObj = new ArrayList<>();
+
+            new Thread(() -> startRequest()).start();
+            new Thread(() -> completeRequest()).start();
+            List<EmergencyVehicle> vehicleObjList = new ArrayList<>();
             File distanceFile = new File("data/EmergencyVehicle.csv");
             BufferedReader br = new BufferedReader(new FileReader(distanceFile));
             String line="";
             while ((line = br.readLine()) != null) {
                 String[] attributes = line.split(",");
                 EmergencyVehicle emergencyVehicles = createEmergencyVehicle(attributes);
-                vehicleObj.add(emergencyVehicles);
+                vehicleObjList.add(emergencyVehicles);
             }
             br.close();
 
-            List<RequestVehicle> requestObj = new ArrayList<>();
+            List<RequestVehicle> requestObjList = new ArrayList<>();
             File reqFile = new File("data/TableRequest.csv");
             BufferedReader breader = new BufferedReader(new FileReader(reqFile));
             String line1="";
             while ((line1 = breader.readLine()) != null) {
                 String[] lines = line1.split(",");
                 RequestVehicle requestVehicles = createRequestVehicle(lines);
-                requestObj.add(requestVehicles);
+                requestObjList.add(requestVehicles);
             }
             breader.close();
 
-           for(RequestVehicle r : requestObj){
+           for(RequestVehicle r : requestObjList){
                 System.out.println("VehicleType: " + r.vehicleType);
                 System.out.println("ZipCode: " + r.zipCode);
                System.out.println("Requested Vehicles: " + r.number);
-                requestVehicle(r.vehicleType,r.zipCode, r.number,vehicleObj);
+                requestVehicle(r.vehicleType,r.zipCode, r.number,vehicleObjList);
             }
 
 
@@ -69,6 +72,17 @@ import java.util.List;
 
         }
 
+    /*List<RequestComplete> requestComplete = new ArrayList<>();
+    File completeFile = new File("data/RequestComplete");
+    BufferedReader bufferedReader = new BufferedReader(new FileReader(completeFile));
+    String line1="";
+            while ((line1 = bufferedReader.readLine()) != null) {
+        String[] lines = line1.split(",");
+        RequestVehicle requestCompleted = completeRequest(lines);
+        requestComplete.add(requestCompleted);
+    }
+            bufferedReader.close();*/
+
         private static EmergencyVehicle createEmergencyVehicle(String[] attributes) {
             int vehicleID = Integer.parseInt(attributes[0]);
             int zipCode = Integer.parseInt(attributes[1]);
@@ -86,5 +100,10 @@ import java.util.List;
 
              return new RequestVehicle(vehicleType, zipCode, number);
         }
+        public static void startRequest(){
 
+        }
+        public static void completeRequest(){
+
+        }
     }
