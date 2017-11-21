@@ -48,21 +48,14 @@ import java.util.List;
         public static void requestVehicle(int requestType, int zipcode, int number,List<EmergencyVehicle> vehicleObj) throws IOException {
 
             for(EmergencyVehicle e : vehicleObj){
-                //System.out.println(e.vehicleID);
                 if(e.vehicleType == requestType && e.zipCode==zipcode){
                     if( e.availability>=number){
                         e.decreaseAvailability(number);
-                        System.out.println(e);
-                        e.scheduleRelease(number);
+                        System.out.println("The vehicle dispatched : "+e.vehicleID);
+                        //e.scheduleRelease(number);
                         System.out.println(e);
                         break;
                     }
-
-                    /*else if(e.availability>0){
-
-                    }*/
-
-
                 }
                /* else{
                     //algorithm part to be added
