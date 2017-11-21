@@ -49,7 +49,7 @@ import java.util.List;
 
             for(EmergencyVehicle e : vehicleObj){
                 if(e.vehicleType == requestType && e.zipCode==zipcode){
-                    if( e.availability>=number){
+                    if( e.availability==1){
                         e.decreaseAvailability(number);
                         System.out.println("The vehicle dispatched : "+e.vehicleID);
                         //e.scheduleRelease(number);
