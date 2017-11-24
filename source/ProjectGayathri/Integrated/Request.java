@@ -20,8 +20,8 @@ public class Request {
     private String path_source;
     private String destination;
     private int weight;
-    public final List<Path> graph;
-    public List<Path> shortestPath;
+    public final List<Edge> graph;
+    public List<Edge> shortestPath;
     public Map<String, Pair> distance;
     
 	 public static void main(String[] args) throws IOException{
@@ -73,7 +73,7 @@ public class Request {
                  }
              }
              else{
-            	  List<Path> list = new ArrayList<Path>();
+            	  List<Edge> list = new ArrayList<Edge>();
       	        FileReader in = new FileReader("C:/Users/User/Desktop/Algorithms-Project-master/source/EmergencyVehicle/data/Distance.txt");
       	    	BufferedReader br = new BufferedReader(in);
       	        FileWriter fw=null;
@@ -93,7 +93,7 @@ public class Request {
       	    	in.close();
 
       	        for(int i=0; i<count; i++){
-      	            list.add(new Path((a.get(j)), (a.get(j+1)), Integer.parseInt(a.get(j+2))));
+      	            list.add(new Edge((a.get(j)), (a.get(j+1)), Integer.parseInt(a.get(j+2))));
       	            j+=3;
       	        }
       	        
@@ -113,7 +113,7 @@ public class Request {
       	                
       	                list = object.compute(uniqueNodes.get(0), uniqueNodes.get(i));                
       	                int sum =0;
-      	                for (Path path : list)
+      	                for (Edge path : list)
       	                {   
       	                    sum = sum+path.getWeight();
       	                    bw.write(path.getSource() + " -> " + path.getDestination()+" ");
@@ -143,7 +143,7 @@ public class Request {
  }
          bufferedReader.close();*/
 
-     public Request(List<Path> graph)
+     public Request(List<Edge> graph)
      {
          this.graph = graph;
      }
@@ -172,11 +172,11 @@ public class Request {
      }
      
     
- 	    public List<Path> compute(String start, String end)
+ 	    public List<Edge> compute(String start, String end)
  	    {
- 	        List<Path> list = new ArrayList<Path>();
+ 	        List<Edge> list = new ArrayList<Edge>();
  	        list.addAll(graph);
- 	        shortestPath = new ArrayList<Path>();
+ 	        shortestPath = new ArrayList<Edge>();
  	        distance = new HashMap<String, Pair>();
  	        distance.put(start, new Pair(0, "\0"));
  	        compute(start, end, list);
@@ -185,11 +185,11 @@ public class Request {
  	        return shortestPath;
  	    }
  	    
- 	    private void compute(String source, String destination, List<Path> graph)
+ 	    private void compute(String source, String destination, List<Edge> graph)
  	    {
- 	        Path bestPath = null;
+ 	       Edge bestPath = null;
  	        
- 	        for (Path path : graph)
+ 	        for (Edge path : graph)
  	        {
  	            if (path.getSource() == source)
  	            {
@@ -222,9 +222,9 @@ public class Request {
  	            }
  	        }
  	        
- 	        List<Path> remove = new ArrayList();
+ 	        List<Edge> remove = new ArrayList();
  	        
- 	        for (Path path : graph)
+ 	        for (Edge path : graph)
  	        {
  	            if (path.getSource() == source || path.getDestination() == source)
  	            {
@@ -240,7 +240,7 @@ public class Request {
  	            {
  	                boolean check = false;
  	                
- 	                for (Path path : graph)
+ 	                for (Edge path : graph)
  	                {
  	                    if (path.getSource() == bestPath.getDestination())
  	                    {
@@ -264,7 +264,7 @@ public class Request {
  	    {
  	        Pair pair = (Pair) distance.get(end);
  	        
- 	        shortestPath.add(new Path(pair.getSource(), end, pair.getValue()));
+ 	        shortestPath.add(new Edge(pair.getSource(), end, pair.getValue()));
  	        
  	        while (pair.getSource() != start)
  	        {
@@ -274,7 +274,7 @@ public class Request {
  	            {
  	            	pair = new Pair(0,start);
  	            }
- 	            shortestPath.add(new Path(pair.getSource(), c, pair.getValue()));
+ 	            shortestPath.add(new Edge(pair.getSource(), c, pair.getValue()));
  	        }
  	        
  	        Collections.reverse(shortestPath);
