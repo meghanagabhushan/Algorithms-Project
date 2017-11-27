@@ -61,7 +61,7 @@ public class MainRequestHandler {
             String requestZipcode = requests[1];
             int number = Integer.parseInt(requests[2]);
             int count =0;
-            //while(number<count){
+            while(number>count){
                 for (Map.Entry<String, String> entry : vehiclesMap.entrySet()) {
                     String key = entry.getKey();
                     String value = entry.getValue();
@@ -76,10 +76,11 @@ public class MainRequestHandler {
                         break;
                     }
                     else{
-                        //write the algorithm code
+                            count=number;
+                        //write the algorithm codeb
                     }
                 }
-            //}
+            }
 
         }
 
