@@ -13,8 +13,8 @@ public class Request {
 
     public static void main(String[] args) throws IOException{
 
-        new Thread(() -> startRequest()).start();
-        new Thread(() -> completeRequest()).start();
+        /*new Thread(() -> startRequest()).start();
+        new Thread(() -> completeRequest()).start();*/
         List<EmergencyVehicle> vehicleObjList = new ArrayList<>();
         File distanceFile = new File("data/EmergencyVehicle.txt");
         BufferedReader br = new BufferedReader(new FileReader(distanceFile));
@@ -27,7 +27,7 @@ public class Request {
         br.close();
 
         List<RequestVehicle> requestObjList = new ArrayList<>();
-        File reqFile = new File("data/TableRequest.csv");
+        File reqFile = new File("data/RequestTable.csv");
         BufferedReader breader = new BufferedReader(new FileReader(reqFile));
         String line1="";
         while ((line1 = breader.readLine()) != null) {
@@ -38,8 +38,8 @@ public class Request {
         breader.close();
 
         for(RequestVehicle r : requestObjList){
-            System.out.println("VehicleType: " + r.vehicleType);
-            System.out.println("ZipCode: " + r.zipCode);
+            System.out.println("Requested VehicleType: " + r.vehicleType);
+            System.out.println("Requested ZipCode: " + r.zipCode);
             System.out.println("Requested Vehicles: " + r.number);
             requestVehicle(r.vehicleType,r.zipCode, r.number,vehicleObjList);
         }
@@ -53,13 +53,16 @@ public class Request {
             if(e.vehicleType == requestType && e.zipCode==zipcode){
                 if( e.availability==1){
                     System.out.println("The vehicle dispatched : "+e.vehicleID+"\n\n");
-                    e.availability=0;
+                    /*e.availability=0;*/
+
                     System.out.println(e);
                     break;
 
                 }
             }
-            else{
+            newContent = e.vehicleID+","+e.zipCode+","+e.vehicleType+","+e.availability+"\n"+newContent;
+            //dijkstra's algorithm implementation
+            /*else{
                 List<Path> list = new ArrayList<Path>();
                 FileReader in = new FileReader("data/Distance.txt");
                 BufferedReader br = new BufferedReader(in);
@@ -112,8 +115,8 @@ public class Request {
                 }
                 bw.flush();
                 bw.close();
-            }
-            newContent = e.vehicleID+","+e.zipCode+","+e.vehicleType+","+e.availability+"\n"+newContent;
+            }*/
+
         }
         File myFoo = new File("data/EmergencyVehicle.txt");
         FileWriter fooWriter = new FileWriter(myFoo, false); // true to append

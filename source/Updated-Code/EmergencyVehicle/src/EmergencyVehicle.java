@@ -1,8 +1,8 @@
 public class EmergencyVehicle {
-    String vehicleID;
-    int vehicleType;
-    int zipCode;
-    int availability;
+        String vehicleID;
+        int vehicleType;
+        int zipCode;
+        int availability;
 
     public EmergencyVehicle(String vehicleID, int zipCode, int vehicleType, int availability) {
 

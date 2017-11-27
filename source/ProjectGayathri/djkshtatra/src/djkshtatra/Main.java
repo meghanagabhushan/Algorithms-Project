@@ -5,21 +5,18 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 public class Main
 {
     public static void main(String[] args) throws FileNotFoundException, IOException
     {
         List<Path> list = new ArrayList();
-        FileReader in = new FileReader("data.txt");
+        FileReader in = new FileReader("data/Distance.txt");
     	BufferedReader br = new BufferedReader(in);
         FileWriter fw=null;
         BufferedWriter bw =null;
-        fw = new FileWriter("Output.txt");
+        fw = new FileWriter("data/Output.txt");
         bw = new BufferedWriter(fw);
     	String line;
         int count=0,j=0;
@@ -36,6 +33,7 @@ public class Main
         for(int i=0; i<count; i++){
             list.add(new Path((a.get(j)).charAt(0), (a.get(j+1)).charAt(0), Integer.parseInt(a.get(j+2))));
             j+=3;
+
         }
         
         Djkshtatra object = new Djkshtatra(list);
