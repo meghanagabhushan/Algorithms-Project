@@ -1,10 +1,10 @@
-public class Path
+public class Edge
 {
     private String source;
     private String destination;
     private int weight;
     
-    public Path(String source, String destination, int weight)
+    public Edge(String source, String destination, int weight)
     {
         this.source = source;
         this.destination = destination;
@@ -41,3 +41,4 @@ public class Path
         this.weight = weight;
     }
 }
+
