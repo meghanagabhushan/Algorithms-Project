@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import Dijkstras.Djkshtatra;
-import Dijkstras.Edge;
-import Dijkstras.Pair;
+//import Dijkstras.Djkshtatra;
+//import Dijkstras.Edge;
+//import Dijkstras.Pair;
 
 /**
  * Created by Megha Nagabhushan on 11/26/2017.
@@ -72,84 +72,84 @@ public class MainRequestHandler {
             String requestZipcode = requests[1];
             int number = Integer.parseInt(requests[2]);
             int count =0;
-            while(number>count){
-                for (Map.Entry<String, String> entry : vehiclesMap.entrySet()) {
-                    String key = entry.getKey();
-                    String value = entry.getValue();
-                    String linesplits[] = value.split(",");
-                    String vehicleType = linesplits[1];
-                    String vehicleZipCode = linesplits[0];
-                    String vehicleAvailability = linesplits[2];
-                    if (requestType.equals(vehicleType) && requestZipcode.equals(vehicleZipCode) && vehicleAvailability.equals("1")) {
-                        System.out.println("Dispatched Vehicle : " + key);
-                        entry.setValue(vehicleZipCode + "," + vehicleType + ",0");
-                        count++;
-                        break;
-                    }
-                    else{
-                            //count=number;
-                        //write the algorithm codeb
-                    	List<Edge> list = new ArrayList();
-                        List<Edge> list1 = new ArrayList();
-                        FileReader inp = new FileReader("data/Distance.txt");
-                    	BufferedReader br = new BufferedReader(inp);
-                        FileWriter fw;
-                        BufferedWriter bw;
-                        fw = new FileWriter("data/Output.txt");
-                        bw = new BufferedWriter(fw);
-                    	String line2;
-                        int count1=0,j=0;
-                    	String[] values;
-                    	ArrayList<String> a= new ArrayList<String>(); 
-                	while ((line2 = br.readLine()) != null) {
-                            values = line2.split(",");  
-                            for (String s : values)
-                    		a.add(s);	
-                            count1++;
-                	}				
-                    	inp.close();
-
-                        for(int i=0; i<count1; i++){
-                            //System.out.println((a.get(j)).charAt(0)+"-"+(a.get(j+1)).charAt(0)+"-"+Integer.parseInt(a.get(j+2)));
-                            list.add(new Edge(a.get(j), a.get(j+1), Integer.parseInt(a.get(j+2))));
-                            j+=3;
-                        }
-                        
-                        ArrayList<String> uniqueNodes = new ArrayList<String>();
-                        for(int i=0;i<a.size();i++){
-                            if(uniqueNodes.contains(a.get(i)) || ((i+1)%3)==0)
-                                continue;
-                            
-                            else
-                                uniqueNodes.add(a.get(i));
-                            
-                        } 
-                        Djkshtatra object;
-                        int sum;
-                        for(int i=0; i<uniqueNodes.size();i++){      
-                            if( uniqueNodes.get(i)!= uniqueNodes.get(0)){
-                                object = new Djkshtatra(list);
-                                list1 = object.compute(uniqueNodes.get(0), uniqueNodes.get(i));                
-                                sum =0;
-                                for (Edge path : list1)
-                                {   
-                                    sum = sum + path.getWeight();
-                                    bw.write(path.getSource() + " -> " + path.getDestination()+" ");
-                                }        
-                                 bw.write(" distance : "+sum + "\n");
-                                 
-                                 list1 = null;
-                                 object = null;
-                            }
-                        }     
-                        bw.flush();
-                        bw.close();        
-                    }
-                    
-                
+            for (Map.Entry<String, String> entry : vehiclesMap.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                String linesplits[] = value.split(",");
+                String vehicleType = linesplits[1];
+                String vehicleZipCode = linesplits[0];
+                String vehicleAvailability = linesplits[2];
+                if (requestType.equals(vehicleType) && requestZipcode.equals(vehicleZipCode) && vehicleAvailability.equals("1")) {
+                    System.out.println("Dispatched Vehicle : " + key);
+                    entry.setValue(vehicleZipCode + "," + vehicleType + ",0");
+                    count++;
+                    //break;
+                }
+                else if (count >= number) {
+                    break;
                 }
             }
+            while(number>count){
+                //count = number;
+                //write the algorithm codeb
+                List<Edge> list = new ArrayList();
+                List<Edge> list1 = new ArrayList();
+                FileReader inp = new FileReader("data/NewDistance.txt");
+                BufferedReader br = new BufferedReader(inp);
+                FileWriter fw;
+                BufferedWriter bw;
+                fw = new FileWriter("data/Output.txt");
+                bw = new BufferedWriter(fw);
+                String line2;
+                int count1=0,j=0;
+                String[] values;
+                ArrayList<String> a= new ArrayList<String>();
+                while ((line2 = br.readLine()) != null) {
+                    values = line2.split(",");
+                    for (String s : values)
+                        a.add(s);
+                    count1++;
+                }
+                inp.close();
 
+                for(int i=0; i<count1; i++){
+                            //System.out.println((a.get(j)).charAt(0)+"-"+(a.get(j+1)).charAt(0)+"-"+Integer.parseInt(a.get(j+2)));
+                    list.add(new Edge(a.get(j), a.get(j+1), Integer.parseInt(a.get(j+2))));
+                    j+=3;
+                }
+
+                ArrayList<String> uniqueNodes = new ArrayList<String>();
+                for(int i=0;i<a.size();i++){
+                    if(uniqueNodes.contains(a.get(i)) || ((i+1)%3)==0)
+                        continue;
+                            
+                    else
+                        uniqueNodes.add(a.get(i));
+                            
+                }
+                Djkshtatra object;
+                int sum;
+                for(int i=0; i<uniqueNodes.size();i++){
+                    if( uniqueNodes.get(i)!= uniqueNodes.get(0)){
+                        object = new Djkshtatra(list);
+                        list1 = object.compute(uniqueNodes.get(0), uniqueNodes.get(i));
+                        sum =0;
+                        for (Edge path : list1)
+                        {
+                            sum = sum + path.getWeight();
+                            bw.write(path.getSource() + " -> " + path.getDestination()+" ");
+                        }
+                        bw.write(" distance : "+sum + "\n");
+                                 
+                        list1 = null;
+                        object = null;
+                    }
+                }
+                bw.flush();
+                bw.close();
+            }
+                    
+                
         }
 
         File myFoo = new File("data/EmergencyVehicle.txt");
@@ -159,9 +159,8 @@ public class MainRequestHandler {
             fooWriter.write(entry.getKey() + "," + entry.getValue() + "\n");
         }
         fooWriter.close();
+    }
 
-    
-}
     public void completeRequest() throws IOException {
 
         //writing down ids of all vehicles that completed the request into an array list
