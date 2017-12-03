@@ -1,23 +1,12 @@
-package djkshtatra;
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- *
- * @author Manisha
- */
 public class Pair
 {
     private int value;
     private String source;
     
-    public Pair(int value, String source)
+    public Pair(int value, String string)
     {
         this.value = value;
-        this.source = source;
+        this.source = string;
     }
     
     public int getValue()

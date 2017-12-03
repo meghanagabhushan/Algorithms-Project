@@ -1,9 +1,7 @@
-64114 -> 64110 : path does not exists
-64114 -> 64111  distance : 1
-64114 -> 64112 : path does not exists
-64114 -> 64113  distance : 3
-64114 -> 64115  distance : 5
-64114 -> 64116  distance : 6
-64114 -> 64117  distance : 7
-64114 -> 64118  distance : 8
-64114 -> 64119  distance : 9
+64110 -> 64113  distance : 5
+64110 -> 64111  distance : 3
+64110 -> 64112  distance : 2
+64110 -> 64112 64112 -> 64114  distance : 3
+64110 -> 64113 64113 -> 64115  distance : 7
+64110 -> 64112 64112 -> 64114 64114 -> 64116  distance : 7
+64110 -> 64112 64112 -> 64114 64114 -> 64116 64116 -> 64117  distance : 9

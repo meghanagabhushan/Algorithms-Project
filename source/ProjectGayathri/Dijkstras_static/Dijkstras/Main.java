@@ -1,4 +1,4 @@
-package Dijkstras;
+package djkshtatra;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -13,13 +13,13 @@ public class Main
 {
     public static void main(String[] args) throws FileNotFoundException, IOException
     {
-        List<Edge> list = new ArrayList();
-        List<Edge> list1 = new ArrayList();
-        FileReader in = new FileReader("C:/Users/User/Desktop/djkshtatra/src/djkshtatra/Dijkstras/data.txt");
+        List<Path> list = new ArrayList();
+        List<Path> list1 = new ArrayList();
+        FileReader in = new FileReader("C:/Users/Manisha/Documents/NetBeansProjects/djkshtatra/src/djkshtatra/data.txt");
     	BufferedReader br = new BufferedReader(in);
         FileWriter fw;
         BufferedWriter bw;
-        fw = new FileWriter("C:/Users/User/Desktop/djkshtatra/src/djkshtatra/Dijkstras/Output.txt");
+        fw = new FileWriter("Output.txt");
         bw = new BufferedWriter(fw);
     	String line;
         int count=0,j=0;
@@ -35,7 +35,7 @@ public class Main
 
         for(int i=0; i<count; i++){
             //System.out.println((a.get(j)).charAt(0)+"-"+(a.get(j+1)).charAt(0)+"-"+Integer.parseInt(a.get(j+2)));
-            list.add(new Edge(a.get(j), a.get(j+1), Integer.parseInt(a.get(j+2))));
+            list.add(new Path(a.get(j), a.get(j+1), Integer.parseInt(a.get(j+2))));
             j+=3;
         }
         
@@ -50,36 +50,37 @@ public class Main
         } 
         Djkshtatra object;
         int sum;
-        String input_var = "64114"; // insert the zipcode here
-        boolean check = true;
+        String input_var = "64117"; // insert the zipcode here
         for(int i=0; i<uniqueNodes.size();i++){      
             if( !(input_var.equals(uniqueNodes.get(i)))){
                 System.out.println( input_var +"-"+uniqueNodes.get(i));
                 object = new Djkshtatra(list);
-                if(object.compute( input_var , uniqueNodes.get(i))== null){
-                    bw.write(input_var+" -> "+ uniqueNodes.get(i)+" : direct path does not exists");
-                    bw.newLine();
-                }
-                else{
+//                if(object.compute( input_var , uniqueNodes.get(i))== null){
+//                    bw.write(input_var+" -> "+ uniqueNodes.get(i)+" : path does not exists");
+//                    bw.newLine();
+//                }
+//                else{
                     list1 = object.compute( input_var , uniqueNodes.get(i)); 
                     sum =0;
-                    if((list1.get(0).getSource()).equals(input_var)){
-                        for (Edge path : list1)
+                    //if((list1.get(0).getSource()).equals(input_var)){
+                        for (Path path : list1)
                         {   
-                            sum = sum + path.getWeight();    
+                            sum++;
+                            //sum = sum + path.getWeight();    
                             bw.write(path.getSource() + " -> " + path.getDestination()+" ");
                         } 
 
-                        bw.write(" distance : "+sum );
+                        bw.write(" distance : "+list1.get(sum-1).getWeight() );
                         bw.newLine();
-                    }
-                    else{
-                        bw.write(input_var+" -> "+ uniqueNodes.get(i)+" : path does not exists");
-                        bw.newLine();
-                    }                    
-                }                               
+//                    }
+//                    else{
+//                        bw.write(input_var+" -> "+ uniqueNodes.get(i)+" : path does not exists");
+//                        bw.newLine();
+//                    }                    
+                //}                               
                 list1 = null;
                 object = null;
+                
             }
         }     
         bw.flush();

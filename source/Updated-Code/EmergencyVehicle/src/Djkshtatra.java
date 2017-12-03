@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -6,87 +7,99 @@ import java.util.Map;
 
 public class Djkshtatra
 {
-    private final List<Edge> graph;
-    private List<Edge> shortestEdge;
+    private final List<Path> graph;
+    private List<Path> shortestPath;
     private Map distance;
+    private String source_main;
+    private String dest_main;
     
-    public Djkshtatra(List<Edge> graph)
+    public Djkshtatra(List<Path> graph)
     {
         this.graph = graph;
     }
     
-    public List<Edge> compute(String start, String end)
+    public List<Path> compute(String start, String end)
     {        
+        source_main = start;
+        dest_main = end;
         List list = new ArrayList();
         list.addAll(graph);
-        shortestEdge = new ArrayList();
+        shortestPath = new ArrayList();
         distance = new HashMap();
         distance.put(start, new Pair(0, ""));
         compute(start, end, list);
-        generateShortestEdge(start, end);        
-        return shortestEdge;
+        generateShortestPath(start, end);   
+//        if(shortestPath.isEmpty()){
+//             return null;
+//        }
+//           
+//        else
+//            return shortestPath;
+        return shortestPath;
     }
     
-    private void compute(String source, String destination, List<Edge> graph)
+    private void compute(String source, String destination, List<Path> graph)
     {
-        Edge bestEdge = null;
+        Path bestPath = null;
         
-        for (Edge Edge : graph)
+        for (Path path : graph)
         {
-            if ((Edge.getSource()).equals(source))
+            if((path.getSource()).equals(source_main) && (path.getDestination()).equals(dest_main)){
+                bestPath = path;
+                distance.put(path.getDestination(), new Pair(path.getWeight(), path.getSource()));
+                break;
+            }
+            else if ((path.getSource()).equals(source))
             {
-                int EdgeVal = Edge.getWeight() ;
+                int pathVal = path.getWeight() + ((Pair) distance.get(source)).getValue();
                 
-                if (!distance.containsKey(Edge.getDestination()))
+                if (!distance.containsKey(path.getDestination()))
                 {
-                    distance.put(Edge.getDestination(), new Pair(EdgeVal, Edge.getSource()));
+                    distance.put(path.getDestination(), new Pair(pathVal, path.getSource()));
+                }
+                else  if (((Pair) distance.get(path.getDestination())).getValue() > pathVal)
+                {
+                        distance.remove(path.getDestination());
+                        distance.put(path.getDestination(), new Pair(pathVal, path.getSource()));
+                }
+                
+                if (bestPath == null)
+                {
+                    bestPath = path;
                 }
                 else
                 {
-                    if (((Pair) distance.get(Edge.getDestination())).getValue() > EdgeVal)
+                    if (((Pair) distance.get(bestPath.getDestination())).getValue() > ((Pair) distance.get(path.getDestination())).getValue())
                     {
-                        distance.remove(Edge.getDestination());
-                        distance.put(Edge.getDestination(), new Pair(EdgeVal, Edge.getSource()));
-                    }
-                }
-                
-                if (bestEdge == null)
-                {
-                    bestEdge = Edge;
-                }
-                else
-                {
-                    if (((Pair) distance.get(bestEdge.getDestination())).getValue() > ((Pair) distance.get(Edge.getDestination())).getValue())
-                    {
-                        bestEdge = Edge;
+                        bestPath = path;
                     }
                 }
             }
         }
         
-        List<Edge> remove = new ArrayList();
+        List<Path> remove = new ArrayList();
         
-        for (Edge Edge : graph)
+        for (Path path : graph)
         {
-            if ((Edge.getSource()).equals(source) || (Edge.getDestination()).equals(source))
+            if ((path.getSource()).equals(source) || (path.getDestination()).equals(source))
             {
-                remove.add(Edge);
+                remove.add(path);
             }
         }
         
         graph.removeAll(remove);
         
-        if (bestEdge != null)
+        if (bestPath != null)
         {
-            if((bestEdge.getDestination()).equals(destination))
+            if((bestPath.getDestination()).equals(destination))
                 ;
             else
             {
                 boolean check = false;
                 
-                for (Edge Edge : graph)
+                for (Path path : graph)
                 {
-                    if ((Edge.getSource()).equals(bestEdge.getDestination()))
+                    if ((path.getSource()).equals(bestPath.getDestination()))
                     {
                         check = true;
                     }
@@ -94,7 +107,7 @@ public class Djkshtatra
                 
                 if (check)
                 {
-                    compute(bestEdge.getDestination(), destination, graph);
+                    compute(bestPath.getDestination(), destination, graph);
                 }
                 else if (!graph.isEmpty())
                 {
@@ -104,16 +117,41 @@ public class Djkshtatra
         }
     }
     
-    private void generateShortestEdge(String start, String end)
+    private void generateShortestPath(String start, String end)
     {
-        Pair pair = (Pair) distance.get(end);    
-        shortestEdge.add(new Edge(pair.getSource(), end, pair.getValue()));       
+        Pair pair = (Pair) distance.get(end);
+        
+        shortestPath.add(new Path(pair.getSource(), end, pair.getValue()));
+        
         while (!((pair.getSource()).equals(start)))
         {
             String c = pair.getSource();
             pair = (Pair) distance.get(pair.getSource());
-            shortestEdge.add(new Edge(pair.getSource(), c, pair.getValue()));
-        }       
-        Collections.reverse(shortestEdge);
+            shortestPath.add(new Path(pair.getSource(), c, pair.getValue()));
+        }
+        
+        Collections.reverse(shortestPath);
     }
+    
+    
+//    private void generateShortestPath(String start, String end)
+//    {
+//        Pair pair = (Pair) distance.get(end);   
+//        if(pair == null){
+//        
+//        }
+//        else{
+//            shortestPath.add(new Path(pair.getSource(), end, pair.getValue())); 
+//            while (!((pair.getSource()).equals(start)))
+//            {
+//                String c = pair.getSource();
+//                pair = (Pair) distance.get(pair.getSource());
+//                    if(pair == null)
+//                        break;
+//                    else
+//                        shortestPath.add(new Path(pair.getSource(), c, pair.getValue()));
+//            }       
+//            Collections.reverse(shortestPath);
+//        }
+//    }
 }

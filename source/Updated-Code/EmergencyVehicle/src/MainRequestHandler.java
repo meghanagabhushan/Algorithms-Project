@@ -1,6 +1,6 @@
-
 import java.io.*;
 import java.util.*;
+
 
 //import Dijkstras.Djkshtatra;
 //import Dijkstras.Edge;
@@ -28,13 +28,13 @@ public class MainRequestHandler {
             }
         }).start();
         //Thread to update the completed request
-        new Thread(() -> {
+        /*new Thread(() -> {
             try {
                 mainRequestHandler.completeRequest();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }).start();
+        }).start();*/
 
     }
 
@@ -54,7 +54,7 @@ public class MainRequestHandler {
 
         //Saving requesttable File into a list
         ArrayList<String> requestList = new ArrayList<>();
-        File reqFile = new File("data/RequestTable");
+        File reqFile = new File("data/requestOld");
         BufferedReader breader = new BufferedReader(new FileReader(reqFile));
         String line1 = "";
         while ((line1 = breader.readLine()) != null) {
@@ -88,8 +88,81 @@ public class MainRequestHandler {
             while(number>count) {
 
                 //count = number;
-                algorithmImplementation(requestType, requestZipcode, number,count,vehiclesMap);
+                //ealgorithmImplementation(requestType, requestZipcode, number,count,vehiclesMap);
                 //write the algorithm codeb
+            	 List<Path> list = new ArrayList();
+                 List<Path> list1 = new ArrayList();
+                 FileReader in1 = new FileReader("data/Distance.txt");
+             	BufferedReader br = new BufferedReader(in1);
+                 FileWriter fw;
+                 BufferedWriter bw;
+                 fw = new FileWriter("data/Output.txt");
+                 bw = new BufferedWriter(fw);
+             	String l1;
+                 int count1=0,j=0;
+             	String[] values;
+             	ArrayList<String> a= new ArrayList<String>(); 
+         	while ((l1 = br.readLine()) != null) {
+                     values = l1.split(",");  
+                     for (String s : values)
+             		    a.add(s);
+                     count1++;
+         	}				
+             	in.close();
+
+                 for(int i=0; i<count1; i++){
+                     //System.out.println((a.get(j)).charAt(0)+"-"+(a.get(j+1)).charAt(0)+"-"+Integer.parseInt(a.get(j+2)));
+                     list.add(new Path(a.get(j), a.get(j+1), Integer.parseInt(a.get(j+2))));
+                     j+=3;
+                 }
+                 
+                 ArrayList<String> uniqueNodes = new ArrayList<String>();
+                 for(int i=0;i<a.size();i++){
+                     if(uniqueNodes.contains(a.get(i)) || ((i+1)%3)==0)
+                         continue;
+                     
+                     else
+                         uniqueNodes.add(a.get(i));
+                     
+                 } 
+                 Djkshtatra object;
+                 int sum;
+                 String input_var = "64117"; // insert the zipcode here
+                 for(int i=0; i<uniqueNodes.size();i++){      
+                     if( !(input_var.equals(uniqueNodes.get(i)))){
+                         //System.out.println( input_var +"-"+uniqueNodes.get(i));
+                         object = new Djkshtatra(list);
+//                         if(object.compute( input_var , uniqueNodes.get(i))== null){
+//                             bw.write(input_var+" -> "+ uniqueNodes.get(i)+" : path does not exists");
+//                             bw.newLine();
+//                         }
+//                         else{
+                             list1 = object.compute( input_var , uniqueNodes.get(i)); 
+                             sum =0;
+                             //if((list1.get(0).getSource()).equals(input_var)){
+                                 for (Path path : list1)
+                                 {   
+                                     sum++;
+                                     //sum = sum + path.getWeight();    
+                                     bw.write(path.getSource() + " -> " + path.getDestination()+" ");
+                                 } 
+
+                                 bw.write(" distance : "+list1.get(sum-1).getWeight() );
+                                 bw.newLine();
+//                             }
+//                             else{
+//                                 bw.write(input_var+" -> "+ uniqueNodes.get(i)+" : path does not exists");
+//                                 bw.newLine();
+//                             }                    
+                         //}                               
+                         list1 = null;
+                         object = null;
+                         
+                     }
+                 }     
+                 bw.flush();
+                 bw.close();
+            	
             }
                     
                 
@@ -150,7 +223,7 @@ public class MainRequestHandler {
        fooWriter.close();
     }
     
- public void algorithmImplementation(String requestType, String requestZipcode, int number, int count, Map<String, String> vehiclesMap) throws IOException {
+/* public void algorithmImplementation(String requestType, String requestZipcode, int number, int count, Map<String, String> vehiclesMap) throws IOException {
      List<Edge> list = new ArrayList();
      List<Edge> list1 = new ArrayList();
      FileReader inp = new FileReader("data/NewDistance.txt");
@@ -234,6 +307,6 @@ public class MainRequestHandler {
      }
      //System.out.println(nearestNeighbour);;
 
- }
+ }*/
    
 }
