@@ -76,6 +76,7 @@ public class RequestHandler {
             String dispatchedVehicle = "";
             String nearestZipCode = "";
             int distance = 0;
+            int flag = 0;
 
             for (Map.Entry<String, String> entry : vehiclesMap.entrySet()) {
                 String key = entry.getKey();
@@ -91,17 +92,21 @@ public class RequestHandler {
                     distance = 0;
                     //changing the availability to 0 once the request is processed
                     entry.setValue(vehicleZipCode + "," + vehicleType + ",0");
+                    //flag = 1;
                     break;
                 }
-                else {
+                /*else {
                     //algorithmImplementation(requestType, requestZipcode,vehiclesMap);
                     dispatchedVehicle = "Not Found";
                     nearestZipCode = "Not Found";
                     distance = -1;
-                }
+                }*/
 
 
             }
+            /*while(flag == 0){
+
+            }*/
             //setting the id of the vehicle that was assigned once the request is processed
             request.setValue(requestType+","+requestZipcode+","+dispatchedVehicle);
             printResult(requestID,requestType,requestZipcode,nearestZipCode,dispatchedVehicle,distance);
