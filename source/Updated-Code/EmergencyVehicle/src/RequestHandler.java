@@ -5,8 +5,10 @@ import java.util.*;
 
 /**
  * Created by Megha Nagabhushan on 11/26/2017.
+ *
  */
 public class RequestHandler {
+
 
     private List<Edge> shortestEdge;
 
@@ -44,6 +46,7 @@ public class RequestHandler {
 
     public synchronized void startRequest() throws IOException {
 
+        ShortestPath shortestPath=new ShortestPath();
 
         System.out.printf("%1s  %-7s   %-7s   %-6s   %-6s   %-6s%n","Request ID","Request Type","Request ZipCode","Nearest Zipcode","Dispatched Vehicle ID","Distance from Source");
         //Saving the contents of Emergency Vehicle  File into a Hash Map with vehicle ID as its Key and zipcode,type and availability as its value
@@ -76,37 +79,28 @@ public class RequestHandler {
             String dispatchedVehicle = "";
             String nearestZipCode = "";
             int distance = 0;
+            boolean flag= false;
 
-            for (Map.Entry<String, String> entry : vehiclesMap.entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
-                String linesplits[] = value.split(",");
-                String vehicleType = linesplits[1];
-                String vehicleZipCode = linesplits[0];
-                String vehicleAvailability = linesplits[2];
-                if (requestType.equals(vehicleType) && requestZipcode.equals(vehicleZipCode) && vehicleAvailability.equals("1")) {
-                    //System.out.println("Dispatched Vehicle : " + key +" for Request ID : "+requestID);
-                    dispatchedVehicle = key;
-                    nearestZipCode = requestZipcode;
-                    distance = 0;
-                    //changing the availability to 0 once the request is processed
-                    entry.setValue(vehicleZipCode + "," + vehicleType + ",0");
-                    break;
-                }
-                else {
-                    //algorithmImplementation(requestType, requestZipcode,vehiclesMap);
-                    dispatchedVehicle = "Not Found";
-                    nearestZipCode = "Not Found";
-                    distance = -1;
-                }
+            checkEmergency(vehiclesMap,requestZipcode,requestType,flag);
 
+            while(!flag){
+                String newZipCode = shortestPath.algorithmImplementation(requestZipcode);
+                String splits[]=newZipCode.split(",");
 
+                System.out.println("Nearest Neighbor: "+splits[0]+"\tDistance:"+splits[1]);
+                //checkEmergency(vehiclesMap,splits[0],requestType,flag);
+                dispatchedVehicle = "Not Found";
+                nearestZipCode = "Not Found";
+                distance = -1;
+
+               flag=true;
             }
-            //setting the id of the vehicle that was assigned once the request is processed
-            request.setValue(requestType+","+requestZipcode+","+dispatchedVehicle);
-            printResult(requestID,requestType,requestZipcode,nearestZipCode,dispatchedVehicle,distance);
 
+            //setting the id of the vehicle that was assigned once the request is processed
+            request.setValue(requestType + "," + requestZipcode + "," + dispatchedVehicle);
+            printResult(requestID, requestType, requestZipcode, nearestZipCode, dispatchedVehicle, distance);
         }
+
 
         //updating the Emergency Vehicle File with the new availability [writing the Hash map into the file]
         File myFoo = new File("data/EmergencyVehicle.txt");
@@ -179,5 +173,29 @@ public class RequestHandler {
     public void printResult(String requestID,String requestType,String requestZipcode,String nearestZipCode,String dispatchedVehicle,int distance){
         //System.out.println("Request ID : "+requestID+"\t"+"Request Type : "+requestType+"\t"+"Request Zipcode : "+requestZipcode+"\t"+"Nearest Zipcode : "+nearestZipCode+"\t"+"Dispatched Vehicle ID : "+dispatchedVehicle+"\t"+"Distance from the source : "+distance+"\n");
         System.out.printf("%1s  %15s   %15s   %15s   %15s   %15s%n", requestID, requestType, requestZipcode, nearestZipCode, dispatchedVehicle,distance);
+    }
+
+    public void checkEmergency(Map<String,String> vehiclesMap, String requestZipcode,String requestType,boolean flag){
+        for (Map.Entry<String, String> entry : vehiclesMap.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            String linesplits[] = value.split(",");
+            String vehicleType = linesplits[1];
+            String vehicleZipCode = linesplits[0];
+            String vehicleAvailability = linesplits[2];
+            String dispatchedVehicle = "";
+            String nearestZipCode = "";
+            int distance = 0;
+            if (requestType.equals(vehicleType) && requestZipcode.equals(vehicleZipCode) && vehicleAvailability.equals("1")) {
+                //System.out.println("Dispatched Vehicle : " + key +" for Request ID : "+requestID);
+                dispatchedVehicle = key;
+                nearestZipCode = requestZipcode;
+                distance = 0;
+                //changing the availability to 0 once the request is processed
+                entry.setValue(vehicleZipCode + "," + vehicleType + ",0");
+                flag=true;
+                break;
+            }
+        }
     }
 }

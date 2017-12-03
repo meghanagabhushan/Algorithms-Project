@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.*;
 
+
 //import Dijkstras.Djkshtatra;
 //import Dijkstras.Edge;
 //import Dijkstras.Pair;
@@ -27,13 +28,13 @@ public class MainRequestHandler {
             }
         }).start();
         //Thread to update the completed request
-        new Thread(() -> {
+        /*new Thread(() -> {
             try {
                 mainRequestHandler.completeRequest();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }).start();
+        }).start();*/
 
     }
 
@@ -53,7 +54,7 @@ public class MainRequestHandler {
 
         //Saving requesttable File into a list
         ArrayList<String> requestList = new ArrayList<>();
-        File reqFile = new File("C:/Users/User/Desktop/djkshtatra/src/djkshtatra/Dijkstras/RequestTable");
+        File reqFile = new File("data/requestOld");
         BufferedReader breader = new BufferedReader(new FileReader(reqFile));
         String line1 = "";
         while ((line1 = breader.readLine()) != null) {
@@ -91,11 +92,11 @@ public class MainRequestHandler {
                 //write the algorithm codeb
             	 List<Path> list = new ArrayList();
                  List<Path> list1 = new ArrayList();
-                 FileReader in1 = new FileReader("C:/Users/User/Desktop/djkshtatra/src/djkshtatra/Dijkstras/data.txt");
+                 FileReader in1 = new FileReader("data/Distance.txt");
              	BufferedReader br = new BufferedReader(in1);
                  FileWriter fw;
                  BufferedWriter bw;
-                 fw = new FileWriter("C:/Users/User/Desktop/djkshtatra/src/djkshtatra/Dijkstras/Output.txt");
+                 fw = new FileWriter("data/Output.txt");
                  bw = new BufferedWriter(fw);
              	String l1;
                  int count1=0,j=0;
@@ -104,7 +105,7 @@ public class MainRequestHandler {
          	while ((l1 = br.readLine()) != null) {
                      values = l1.split(",");  
                      for (String s : values)
-             		a.add(s);	
+             		    a.add(s);
                      count1++;
          	}				
              	in.close();
@@ -129,7 +130,7 @@ public class MainRequestHandler {
                  String input_var = "64117"; // insert the zipcode here
                  for(int i=0; i<uniqueNodes.size();i++){      
                      if( !(input_var.equals(uniqueNodes.get(i)))){
-                         System.out.println( input_var +"-"+uniqueNodes.get(i));
+                         //System.out.println( input_var +"-"+uniqueNodes.get(i));
                          object = new Djkshtatra(list);
 //                         if(object.compute( input_var , uniqueNodes.get(i))== null){
 //                             bw.write(input_var+" -> "+ uniqueNodes.get(i)+" : path does not exists");
