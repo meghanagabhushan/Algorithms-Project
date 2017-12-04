@@ -11,7 +11,7 @@ public class MainRequestHandler {
         //Thread to start the request
         new Thread(() -> {
             try {
-                mainRequestHandler.startRequest();
+                mainRequestHandler.processRequest();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -30,7 +30,7 @@ public class MainRequestHandler {
     }
 
 
-    public synchronized void startRequest() throws IOException {
+    public synchronized void processRequest() throws IOException {
 
         //Saving the contents on Emergency Vehicle in a Hash Map with vehicle ID as its Key and zipcode,type and availability as its value
 
