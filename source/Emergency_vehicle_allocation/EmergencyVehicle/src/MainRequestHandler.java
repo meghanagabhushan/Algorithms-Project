@@ -1,45 +1,33 @@
-
 import java.io.*;
 import java.util.*;
-
-
 /**
- * Created by Megha Nagabhushan on 11/26/2017.
+ * Created by sujitha puthana on 11/24/2017.
  *
  */
-public class RequestHandler {
-
-
-    public RequestHandler() throws IOException {
+public class MainRequestHandler {
+    public static void main(String[] args) {
+        MainRequestHandler mainRequestHandler = new MainRequestHandler();
+        //Thread to start the request
+        new Thread(() -> {
+            try {
+                mainRequestHandler.startRequest();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+        //Thread to update the completed request
+       new Thread(() -> {
+            try {
+                mainRequestHandler.completeRequest();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
-    public static void main(String[] args) throws IOException {
+    public synchronized void startRequest() throws IOException {
 
-        RequestHandler requestHandler = new RequestHandler();
-
-        new Thread() {
-            public void run() {
-                try {
-                    requestHandler.processRequest();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();
-        new Thread() {
-            public void run() {
-                try {
-                    requestHandler.completeRequest();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();
-
-    }
-
-
-    public synchronized void processRequest() throws IOException {
+        //Saving the contents on Emergency Vehicle in a Hash Map with vehicle ID as its Key and zipcode,type and availability as its value
 
         ShortestPath shortestPath=new ShortestPath();
 
@@ -56,12 +44,12 @@ public class RequestHandler {
 
         //Saving requestTable File into a Hash Map with Request ID as the Key and Type, zipcode and assigned Vehicle as its value
         Map<String, String> requestMap = new HashMap<String, String>();
-        File reqFile = new File("data/RequestTable");
+        File reqFile = new File("data/MultipleRequestTable");
         BufferedReader breader = new BufferedReader(new FileReader(reqFile));
         String line1 = "";
         while ((line1 = breader.readLine()) != null) {
             String parts[] = line1.split(",");
-            requestMap.put(parts[0], parts[1] + "," + parts[2] + "," + parts[3]);
+            requestMap.put(parts[0], parts[1] + "," + parts[2] + "," + parts[3]+","+parts[4]);
         }
         breader.close();
 
@@ -71,17 +59,20 @@ public class RequestHandler {
             String requests[] = requestValue.split(",");
             String requestType = requests[0];
             String requestZipcode = requests[1];
+            int number = Integer.parseInt(requests[2]);
+            int count =0;
             String dispatchedVehicle = "";
             String nearestZipCode = "";
             int distance = 0;
             boolean flag= false;
 
-            String resultInformation = checkEmergency(vehiclesMap,requestZipcode,requestType,flag);
+            String resultInformation = checkEmergency(vehiclesMap,requestZipcode,requestType,flag,number,count);
             String[] results = resultInformation.split(",");
 
             dispatchedVehicle = results[0];
-            flag = Boolean.parseBoolean(results[1]);
-
+            count = Integer.parseInt(results[1]);
+            flag=Boolean.parseBoolean(results[2]);
+            String oldDispatchedVehicle = "";
             while(!flag) {
 
                 String newZipcode = "";
@@ -108,27 +99,33 @@ public class RequestHandler {
                             break;
                         }
                     }
-                    newresultInformation = checkEmergency(vehiclesMap,newZipcode,requestType,flag);
+
+                    newresultInformation = checkEmergency(vehiclesMap,newZipcode,requestType,flag,number,count);
                     String[] newresults = newresultInformation.split(",");
 
                     dispatchedVehicle = newresults[0];
-                    flag = Boolean.parseBoolean(newresults[1]);
-                    if(flag)break;
-                 }
+                    count = Integer.parseInt(newresults[1]);
+                    flag=Boolean.parseBoolean(newresults[2]);
+                    if(count<number){
+                        oldDispatchedVehicle=oldDispatchedVehicle+dispatchedVehicle;
+                    }
+                    if(count>=number) {
+                        dispatchedVehicle=oldDispatchedVehicle+dispatchedVehicle;
+                        flag = true;
+                        break;
+                    }
+                }
 
-                if(flag==false){
+                if(number>count){
                     dispatchedVehicle="Not Available";
                     break;
                 }
-
-
 
             }
 
             //setting the id of the vehicle that was assigned once the request is processed
 
-                request.setValue(requestType + "," + requestZipcode + "," + dispatchedVehicle);
-
+            request.setValue(requestType + "," + requestZipcode + "," +number+","+ dispatchedVehicle);
 
             printResult(requestID, requestType, requestZipcode, nearestZipCode, dispatchedVehicle, distance);
         }
@@ -143,15 +140,13 @@ public class RequestHandler {
         fooWriter.close();
 
         //updating the Request Table file with the assigned vehicles [writing the hash map into the file]
-        File myFoo2 = new File("data/RequestTable");
+        File myFoo2 = new File("data/MultipleRequestTable");
         FileWriter fooWriter2 = new FileWriter(myFoo2, false); // true to append*/
         for(Map.Entry<String, String> requestEntry : requestMap.entrySet()) {
             fooWriter2.write(requestEntry.getKey() + "," + requestEntry.getValue() + "\n");
         }
         fooWriter2.close();
-
-    }
-
+}
     public synchronized void completeRequest() throws IOException {
 
         //writing down ids of all vehicles that completed the request into an array list
@@ -204,7 +199,7 @@ public class RequestHandler {
         System.out.printf("%1s  %15s   %15s   %15s   %15s   %15s%n", requestID, requestType, requestZipcode, nearestZipCode, dispatchedVehicle,distance);
     }
 
-    public String checkEmergency(Map<String,String> vehiclesMap, String requestZipcode,String requestType,boolean flag){
+    public String checkEmergency(Map<String,String> vehiclesMap, String requestZipcode,String requestType,boolean flag,int number,int count){
         String dispatchedVehicle = "";
         String nearestZipCode = "";
         int distance = 0;
@@ -216,15 +211,27 @@ public class RequestHandler {
             String vehicleZipCode = linesplits[0];
             String vehicleAvailability = linesplits[2];
 
-            if (requestType.equals(vehicleType) && requestZipcode.equals(vehicleZipCode) && vehicleAvailability.equals("1")) {
-                dispatchedVehicle = key;
+            if ((number>count) && requestType.equals(vehicleType) && requestZipcode.equals(vehicleZipCode) && vehicleAvailability.equals("1")) {
+                dispatchedVehicle += key;
                 nearestZipCode = requestZipcode;
                 distance = 0;
                 entry.setValue(vehicleZipCode + "," + vehicleType + ",0");
+
+                count++;
+                if(count>=number) {
+                    flag = true;
+                    break;
+                }
+            }
+            else if(count>=number){
                 flag=true;
                 break;
+
             }
         }
-        return dispatchedVehicle+","+flag;
+        return dispatchedVehicle+","+count+","+flag;
     }
 }
+
+    
+

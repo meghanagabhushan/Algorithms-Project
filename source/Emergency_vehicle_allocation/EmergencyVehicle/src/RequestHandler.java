@@ -2,7 +2,6 @@
 import java.io.*;
 import java.util.*;
 
-
 /**
  * Created by Megha Nagabhushan on 11/26/2017.
  *
@@ -20,7 +19,7 @@ public class RequestHandler {
         new Thread() {
             public void run() {
                 try {
-                    requestHandler.processRequest();
+                    requestHandler.startRequest();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -39,7 +38,7 @@ public class RequestHandler {
     }
 
 
-    public synchronized void processRequest() throws IOException {
+    public synchronized void startRequest() throws IOException {
 
         ShortestPath shortestPath=new ShortestPath();
 
@@ -126,13 +125,9 @@ public class RequestHandler {
             }
 
             //setting the id of the vehicle that was assigned once the request is processed
-
-                request.setValue(requestType + "," + requestZipcode + "," + dispatchedVehicle);
-
-
+            request.setValue(requestType + "," + requestZipcode + "," + dispatchedVehicle);
             printResult(requestID, requestType, requestZipcode, nearestZipCode, dispatchedVehicle, distance);
         }
-
 
         //updating the Emergency Vehicle File with the new availability [writing the Hash map into the file]
         File myFoo = new File("data/EmergencyVehicle.txt");
@@ -149,7 +144,6 @@ public class RequestHandler {
             fooWriter2.write(requestEntry.getKey() + "," + requestEntry.getValue() + "\n");
         }
         fooWriter2.close();
-
     }
 
     public synchronized void completeRequest() throws IOException {
