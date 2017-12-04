@@ -20,7 +20,7 @@ public class RequestHandler {
         new Thread() {
             public void run() {
                 try {
-                    requestHandler.startRequest();
+                    requestHandler.processRequest();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -39,7 +39,7 @@ public class RequestHandler {
     }
 
 
-    public synchronized void startRequest() throws IOException {
+    public synchronized void processRequest() throws IOException {
 
         ShortestPath shortestPath=new ShortestPath();
 
