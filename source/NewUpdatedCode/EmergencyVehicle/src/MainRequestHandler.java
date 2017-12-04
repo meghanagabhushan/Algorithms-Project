@@ -1,3 +1,4 @@
+/*
 import java.io.*;
 import java.util.*;
 
@@ -6,9 +7,11 @@ import java.util.*;
 //import Dijkstras.Edge;
 //import Dijkstras.Pair;
 
+*/
 /**
  * Created by Megha Nagabhushan on 11/26/2017.
- */
+ *//*
+
 public class MainRequestHandler {
 	
     private List<Edge> shortestEdge;
@@ -28,13 +31,15 @@ public class MainRequestHandler {
             }
         }).start();
         //Thread to update the completed request
-        /*new Thread(() -> {
+        */
+/*new Thread(() -> {
             try {
                 mainRequestHandler.completeRequest();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }).start();*/
+        }).start();*//*
+
 
     }
 
@@ -169,7 +174,8 @@ public class MainRequestHandler {
         }
 
         File myFoo = new File("data/EmergencyVehicle.txt");
-        FileWriter fooWriter = new FileWriter(myFoo, false); // true to append*/
+        FileWriter fooWriter = new FileWriter(myFoo, false); // true to append*//*
+
         for (Map.Entry<String, String> entry : vehiclesMap.entrySet()) {
             //System.out.println(entry.getKey() + "," + entry.getValue() + "\n");
             fooWriter.write(entry.getKey() + "," + entry.getValue() + "\n");
@@ -223,6 +229,7 @@ public class MainRequestHandler {
        fooWriter.close();
     }
     
+*/
 /* public void algorithmImplementation(String requestType, String requestZipcode, int number, int count, Map<String, String> vehiclesMap) throws IOException {
      List<Edge> list = new ArrayList();
      List<Edge> list1 = new ArrayList();
@@ -307,6 +314,8 @@ public class MainRequestHandler {
      }
      //System.out.println(nearestNeighbour);;
 
- }*/
+ }*//*
+
    
 }
+*/

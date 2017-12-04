@@ -3,7 +3,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,9 +28,9 @@ public class ShortestPath {
     }
 
     // A utility function to print the constructed distance array
-    String printSolution(int[] dist, int v, int src)
-    {
+    String printSolution(int[] dist, int v, int src,Map<String,String> vehiclesMap, String requestZipcode,String requestType,boolean flag) throws IOException {
         nearestNeighbour = new HashMap<String, Integer>();
+        RequestHandler requestHandler = new RequestHandler();
         String nearestZipCode = null;
         int distance = 0;
         int distances[] = new int[8];
@@ -53,11 +52,21 @@ public class ShortestPath {
             }
         //int min = Collections.min(nearestNeighbour.values());
         int n = distances.length;
-
+        int nearest = 0;
+        int min =0;
         QuickSort ob = new QuickSort();
         ob.sort(distances, 0, n-1);
-        System.out.println("Printing sorted Array "+Arrays.toString(distances));
-        int min = distances[1];
+        //System.out.println("Printing sorted Array "+Arrays.toString(distances));
+        for(int i=1;i<8;i++){
+            distances[i] = nearest;
+            if(requestHandler.checkEmergency(vehiclesMap,requestZipcode,requestType,flag) == true){
+                distances[i] = min;
+                break;
+            }
+            else{
+                i++;
+            }
+        }
         System.out.println("Minimum after sorting array : "+min);
         for(Map.Entry<String, Integer> entry : nearestNeighbour.entrySet()){
             if(entry.getValue().equals(min)){
@@ -72,8 +81,7 @@ public class ShortestPath {
     // Funtion that implements Dijkstra's single source shortest path
     // algorithm for a graph represented using adjacency matrix
     // representation
-    String dijkstra(int graph[][], int src)
-    {
+    String dijkstra(int graph[][], int src,Map<String,String> vehiclesMap, String requestZipcode,String requestType,boolean flag) throws IOException {
         int dist[] = new int[V]; // The output array. dist[i] will hold
         // the shortest distance from src to i
 
@@ -116,12 +124,12 @@ public class ShortestPath {
         }
 
         // print the constructed distance array
-        String result = printSolution(dist, V,src);
+        String result = printSolution(dist, V,src,vehiclesMap, requestZipcode,requestType,flag);
         return result;
     }
 
     // Driver method
-    public String algorithmImplementation (String requestZipCode) throws IOException {
+    public String algorithmImplementation (Map<String,String> vehiclesMap, String requestZipcode,String requestType,boolean flag) throws IOException {
         /* Let us create the example graph discussed above */
         zip= new HashMap<String,Integer>();
         BufferedReader in = new BufferedReader(new FileReader("data/Label.txt"));
@@ -134,9 +142,9 @@ public class ShortestPath {
         //String requestZipCode="64115";
         int sourceZip=0;
         for (Map.Entry<String, Integer> entry : zip.entrySet()) {
-            if(entry.getKey().equals(requestZipCode)){
+            if(entry.getKey().equals(requestZipcode)){
                 sourceZip=entry.getValue();
-                System.out.println("Requested ZipCode:" + requestZipCode + "\tSource Node:" + sourceZip);
+                System.out.println("Requested ZipCode:" + requestZipcode + "\tSource Node:" + sourceZip);
             }
         }
         int graph[][] = new int[8][8];
@@ -164,7 +172,7 @@ public class ShortestPath {
         System.out.println(Arrays.deepToString(graph));
 
         ShortestPath t = new ShortestPath();
-        String result = t.dijkstra(graph, Integer.parseInt(requestZipCode.substring(requestZipCode.length()-1)));
+        String result = t.dijkstra(graph, Integer.parseInt(requestZipcode.substring(requestZipcode.length()-1)),vehiclesMap, requestZipcode,requestType,flag);
         return result;
 
     }

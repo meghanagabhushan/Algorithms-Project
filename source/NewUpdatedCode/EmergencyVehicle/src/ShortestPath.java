@@ -1,6 +1,4 @@
 import java.io.*;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +24,7 @@ public class ShortestPath {
     }
 
     // A utility function to print the constructed distance array
-    String printSolution(int[] dist, int v, int src) throws IOException {
+    HashMap<String,Integer> printSolution(int[] dist, int v, int src) throws IOException {
         FileWriter fw;
         BufferedWriter bw;
         fw = new FileWriter("data/Output.txt",true);
@@ -34,20 +32,19 @@ public class ShortestPath {
         nearestNeighbour = new HashMap<String, Integer>();
         String nearestZipCode = null;
         int distance = 0;
-        int distances[] = new int[8];
-        System.out.println("Source->Destination   Distance from Source");
+        bw.write("Source->Destination   Distance from Source\n");
         for (int i = 0; i < V; i++)
             for(Map.Entry<String, Integer> entry : zip.entrySet()){
                 if(entry.getValue().equals(i)){
                     if(!getLabel(src).equals(entry.getKey())){
-                        System.out.println(getLabel(src)+"->"+entry.getKey()+"\t\t\t "+dist[i]);
+                        //System.out.println(getLabel(src)+"->"+entry.getKey()+"\t\t\t "+dist[i]);
                         nearestNeighbour.put(entry.getKey(),dist[i]);
-                        distances[i] = dist[i];
+                        //distances[i] = dist[i];
                         bw.write(getLabel(src)+"->"+entry.getKey()+"\t\t\t "+dist[i] );
                         bw.newLine();
                     }
                     else{
-                        System.out.println(getLabel(src)+"->"+entry.getKey()+"\t\t\t "+Double.POSITIVE_INFINITY);
+                        //System.out.println(getLabel(src)+"->"+entry.getKey()+"\t\t\t "+Double.POSITIVE_INFINITY);
                         nearestNeighbour.put(entry.getKey(),Integer.MAX_VALUE);
                         bw.write(getLabel(src)+"->"+entry.getKey()+"\t\t\t "+Double.POSITIVE_INFINITY);
                         bw.newLine();
@@ -59,28 +56,18 @@ public class ShortestPath {
             bw.newLine();
 
         //int min = Collections.min(nearestNeighbour.values());
-        int n = distances.length;
-        QuickSort ob = new QuickSort();
-        ob.sort(distances, 0, n-1);
-        System.out.println("Printing sorted Array "+Arrays.toString(distances));
-        int min = distances[1];
-        System.out.println("Minimum after sorting array : "+min);
-        for(Map.Entry<String, Integer> entry : nearestNeighbour.entrySet()){
-            if(entry.getValue().equals(min)){
-                nearestZipCode = entry.getKey();
-                distance = entry.getValue();
-                //System.out.println("Nearest Neighbour"+entry.getKey());
-            }
-        }
+        //int n = distances.length;
+
+
         bw.flush();
         bw.close();
-        return nearestZipCode+","+Integer.toString(distance);
+        return nearestNeighbour;
     }
 
     // Funtion that implements Dijkstra's single source shortest path
     // algorithm for a graph represented using adjacency matrix
     // representation
-    String dijkstra(int graph[][], int src) throws IOException {
+    HashMap<String, Integer> dijkstra(int graph[][], int src) throws IOException {
         int dist[] = new int[V]; // The output array. dist[i] will hold
         // the shortest distance from src to i
 
@@ -123,13 +110,14 @@ public class ShortestPath {
         }
 
         // print the constructed distance array
-        String result = printSolution(dist, V,src);
+        HashMap<String,Integer> result = printSolution(dist, V,src);
         return result;
     }
 
     // Driver method
-    public String algorithmImplementation (String requestZipCode) throws IOException {
+    public HashMap<String,Integer> algorithmImplementation (String requestZipCode) throws IOException {
         /* Let us create the example graph discussed above */
+
         zip= new HashMap<String,Integer>();
         BufferedReader in = new BufferedReader(new FileReader("data/Label.txt"));
         String line = "";
@@ -138,12 +126,11 @@ public class ShortestPath {
             zip.put(parts[0], Integer.parseInt(parts[1]));
         }
         in.close();
-        //String requestZipCode="64115";
+
         int sourceZip=0;
         for (Map.Entry<String, Integer> entry : zip.entrySet()) {
             if(entry.getKey().equals(requestZipCode)){
                 sourceZip=entry.getValue();
-                System.out.println("Requested ZipCode:" + requestZipCode + "\tSource Node:" + sourceZip);
             }
         }
         int graph[][] = new int[8][8];
@@ -163,15 +150,10 @@ public class ShortestPath {
 
         breader.close();
 
-        /*for(int i=0;i<8;i++){
-            for(int j=0;j<8;j++){
-                System.out.println(graph[i][j]);
-            }
-        }*/
-        System.out.println(Arrays.deepToString(graph));
+        //System.out.println(Arrays.deepToString(graph));
 
         ShortestPath t = new ShortestPath();
-        String result = t.dijkstra(graph, Integer.parseInt(requestZipCode.substring(requestZipCode.length()-1)));
+        HashMap<String,Integer> result = t.dijkstra(graph, Integer.parseInt(requestZipCode.substring(requestZipCode.length()-1)));
         return result;
 
     }

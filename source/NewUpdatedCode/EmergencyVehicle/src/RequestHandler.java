@@ -10,8 +10,6 @@ import java.util.*;
 public class RequestHandler {
 
 
-    private List<Edge> shortestEdge;
-
     private Map distance;
 
     public RequestHandler() throws IOException {
@@ -20,8 +18,7 @@ public class RequestHandler {
     public static void main(String[] args) throws IOException {
 
         RequestHandler requestHandler = new RequestHandler();
-        //requestHandler.startRequest();
-        //requestHandler.completeRequest();
+
         new Thread() {
             public void run() {
                 try {
@@ -81,23 +78,60 @@ public class RequestHandler {
             int distance = 0;
             boolean flag= false;
 
-            checkEmergency(vehiclesMap,requestZipcode,requestType,flag);
+            String resultInformation = checkEmergency(vehiclesMap,requestZipcode,requestType,flag);
+            String[] results = resultInformation.split(",");
 
-            while(!flag){
-                String newZipCode = shortestPath.algorithmImplementation(requestZipcode);
-                String splits[]=newZipCode.split(",");
+            dispatchedVehicle = results[0];
+            flag = Boolean.parseBoolean(results[1]);
 
-                System.out.println("Nearest Neighbor: "+splits[0]+"\tDistance:"+splits[1]);
-                //checkEmergency(vehiclesMap,splits[0],requestType,flag);
-                dispatchedVehicle = "Not Found";
-                nearestZipCode = "Not Found";
-                distance = -1;
+            while(!flag) {
 
-               flag=true;
+                String newZipcode = "";
+                String newresultInformation = null;
+                HashMap<String, Integer> algorithmResult = shortestPath.algorithmImplementation(requestZipcode);
+                int[] distances = new int[8];
+                ArrayList distanceList = new ArrayList();
+                for (Map.Entry<String, Integer> algorithm : algorithmResult.entrySet()) {
+                    distanceList.add(algorithm.getValue());
+                }
+                for (int i =0; i < distanceList.size(); i++)
+                    distances[i] = (int) distanceList.get(i);
+                QuickSort ob = new QuickSort();
+                int n=distances.length;
+                ob.sort(distances, 0, n-1);
+
+
+                for(int i=0 ;i<7;i++){
+                    for(Map.Entry<String, Integer> algorithm : algorithmResult.entrySet()){
+                        if(algorithm.getValue().equals(distances[i])){
+                            newZipcode = algorithm.getKey();
+                            nearestZipCode = newZipcode;
+                            distance = algorithm.getValue();
+                            break;
+                        }
+                    }
+                    newresultInformation = checkEmergency(vehiclesMap,newZipcode,requestType,flag);
+                    String[] newresults = newresultInformation.split(",");
+
+                    dispatchedVehicle = newresults[0];
+                    flag = Boolean.parseBoolean(newresults[1]);
+                    if(flag)break;
+                 }
+
+                if(flag==false){
+                    dispatchedVehicle="Not Available";
+                    break;
+                }
+
+
+
             }
 
             //setting the id of the vehicle that was assigned once the request is processed
-            request.setValue(requestType + "," + requestZipcode + "," + dispatchedVehicle);
+
+                request.setValue(requestType + "," + requestZipcode + "," + dispatchedVehicle);
+
+
             printResult(requestID, requestType, requestZipcode, nearestZipCode, dispatchedVehicle, distance);
         }
 
@@ -106,7 +140,6 @@ public class RequestHandler {
         File myFoo = new File("data/EmergencyVehicle.txt");
         FileWriter fooWriter = new FileWriter(myFoo, false); // true to append*/
         for(Map.Entry<String, String> vehicleEntry : vehiclesMap.entrySet()) {
-            //System.out.println(entry.getKey() + "," + entry.getValue() + "\n");
             fooWriter.write(vehicleEntry.getKey() + "," + vehicleEntry.getValue() + "\n");
         }
         fooWriter.close();
@@ -115,10 +148,10 @@ public class RequestHandler {
         File myFoo2 = new File("data/RequestTable");
         FileWriter fooWriter2 = new FileWriter(myFoo2, false); // true to append*/
         for(Map.Entry<String, String> requestEntry : requestMap.entrySet()) {
-            //System.out.println(entry.getKey() + "," + entry.getValue() + "\n");
             fooWriter2.write(requestEntry.getKey() + "," + requestEntry.getValue() + "\n");
         }
         fooWriter2.close();
+
     }
 
     public synchronized void completeRequest() throws IOException {
@@ -163,7 +196,6 @@ public class RequestHandler {
         File myFoo = new File("data/EmergencyVehicle.txt");
         FileWriter fooWriter = new FileWriter(myFoo, false); // true to append
         for (Map.Entry<String, String> entry : vehiclesMap.entrySet()) {
-            //System.out.println(entry.getKey() + "," + entry.getValue() + "\n");
             fooWriter.write(entry.getKey() + "," + entry.getValue() + "\n");
         }
         fooWriter.close();
@@ -171,11 +203,13 @@ public class RequestHandler {
 
     //Printing the final table of results
     public void printResult(String requestID,String requestType,String requestZipcode,String nearestZipCode,String dispatchedVehicle,int distance){
-        //System.out.println("Request ID : "+requestID+"\t"+"Request Type : "+requestType+"\t"+"Request Zipcode : "+requestZipcode+"\t"+"Nearest Zipcode : "+nearestZipCode+"\t"+"Dispatched Vehicle ID : "+dispatchedVehicle+"\t"+"Distance from the source : "+distance+"\n");
         System.out.printf("%1s  %15s   %15s   %15s   %15s   %15s%n", requestID, requestType, requestZipcode, nearestZipCode, dispatchedVehicle,distance);
     }
 
-    public void checkEmergency(Map<String,String> vehiclesMap, String requestZipcode,String requestType,boolean flag){
+    public String checkEmergency(Map<String,String> vehiclesMap, String requestZipcode,String requestType,boolean flag){
+        String dispatchedVehicle = "";
+        String nearestZipCode = "";
+        int distance = 0;
         for (Map.Entry<String, String> entry : vehiclesMap.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
@@ -183,19 +217,16 @@ public class RequestHandler {
             String vehicleType = linesplits[1];
             String vehicleZipCode = linesplits[0];
             String vehicleAvailability = linesplits[2];
-            String dispatchedVehicle = "";
-            String nearestZipCode = "";
-            int distance = 0;
+
             if (requestType.equals(vehicleType) && requestZipcode.equals(vehicleZipCode) && vehicleAvailability.equals("1")) {
-                //System.out.println("Dispatched Vehicle : " + key +" for Request ID : "+requestID);
                 dispatchedVehicle = key;
                 nearestZipCode = requestZipcode;
                 distance = 0;
-                //changing the availability to 0 once the request is processed
                 entry.setValue(vehicleZipCode + "," + vehicleType + ",0");
                 flag=true;
                 break;
             }
         }
+        return dispatchedVehicle+","+flag;
     }
 }

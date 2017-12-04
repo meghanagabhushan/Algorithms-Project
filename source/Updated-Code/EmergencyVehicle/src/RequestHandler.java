@@ -46,9 +46,9 @@ public class RequestHandler {
 
     public synchronized void startRequest() throws IOException {
 
-        ShortestPath shortestPath=new ShortestPath();
+        ShortestPath shortestPath = new ShortestPath();
 
-        System.out.printf("%1s  %-7s   %-7s   %-6s   %-6s   %-6s%n","Request ID","Request Type","Request ZipCode","Nearest Zipcode","Dispatched Vehicle ID","Distance from Source");
+        System.out.printf("%1s  %-7s   %-7s   %-6s   %-6s   %-6s%n", "Request ID", "Request Type", "Request ZipCode", "Nearest Zipcode", "Dispatched Vehicle ID", "Distance from Source");
         //Saving the contents of Emergency Vehicle  File into a Hash Map with vehicle ID as its Key and zipcode,type and availability as its value
         Map<String, String> vehiclesMap = new HashMap<String, String>();
         BufferedReader in = new BufferedReader(new FileReader("data/EmergencyVehicle.txt"));
@@ -79,8 +79,8 @@ public class RequestHandler {
             String dispatchedVehicle = "";
             String nearestZipCode = "";
             int distance = 0;
-<<<<<<< HEAD
-            int flag = 0;
+
+            //int flag = 0;
 
             for (Map.Entry<String, String> entry : vehiclesMap.entrySet()) {
                 String key = entry.getKey();
@@ -105,57 +105,57 @@ public class RequestHandler {
                     nearestZipCode = "Not Found";
                     distance = -1;
                 }*/
-=======
-            boolean flag= false;
 
-            checkEmergency(vehiclesMap,requestZipcode,requestType,flag);
+                boolean flag = false;
 
-            while(!flag){
-                String newZipCode = shortestPath.algorithmImplementation(requestZipcode);
-                String splits[]=newZipCode.split(",");
->>>>>>> 8152c15d2dc6d2e17f817b00434a35d30198717d
+                flag = checkEmergency(vehiclesMap, requestZipcode, requestType, flag);
 
-                System.out.println("Nearest Neighbor: "+splits[0]+"\tDistance:"+splits[1]);
-                //checkEmergency(vehiclesMap,splits[0],requestType,flag);
-                dispatchedVehicle = "Not Found";
-                nearestZipCode = "Not Found";
-                distance = -1;
+                while (flag == false) {
+                    String newZipCode = shortestPath.algorithmImplementation(vehiclesMap, requestZipcode,requestType,flag);
+                    String splits[] = newZipCode.split(",");
 
-               flag=true;
-            }
-<<<<<<< HEAD
+
+                    System.out.println("Nearest Neighbor: " + splits[0] + "\tDistance:" + splits[1]);
+                    //checkEmergency(vehiclesMap,splits[0],requestType,flag);
+                    dispatchedVehicle = "Not Found";
+                    nearestZipCode = "Not Found";
+                    distance = -1;
+
+                    flag = true;
+                }
+
             /*while(flag == 0){
 
             }*/
-            //setting the id of the vehicle that was assigned once the request is processed
-            request.setValue(requestType+","+requestZipcode+","+dispatchedVehicle);
-            printResult(requestID,requestType,requestZipcode,nearestZipCode,dispatchedVehicle,distance);
-=======
->>>>>>> 8152c15d2dc6d2e17f817b00434a35d30198717d
+                //setting the id of the vehicle that was assigned once the request is processed
+                request.setValue(requestType + "," + requestZipcode + "," + dispatchedVehicle);
+                printResult(requestID, requestType, requestZipcode, nearestZipCode, dispatchedVehicle, distance);
 
-            //setting the id of the vehicle that was assigned once the request is processed
-            request.setValue(requestType + "," + requestZipcode + "," + dispatchedVehicle);
-            printResult(requestID, requestType, requestZipcode, nearestZipCode, dispatchedVehicle, distance);
+
+                //setting the id of the vehicle that was assigned once the request is processed
+                request.setValue(requestType + "," + requestZipcode + "," + dispatchedVehicle);
+                printResult(requestID, requestType, requestZipcode, nearestZipCode, dispatchedVehicle, distance);
+            }
+
+
+            //updating the Emergency Vehicle File with the new availability [writing the Hash map into the file]
+            File myFoo = new File("data/EmergencyVehicle.txt");
+            FileWriter fooWriter = new FileWriter(myFoo, false); // true to append*/
+            for (Map.Entry<String, String> vehicleEntry : vehiclesMap.entrySet()) {
+                //System.out.println(entry.getKey() + "," + entry.getValue() + "\n");
+                fooWriter.write(vehicleEntry.getKey() + "," + vehicleEntry.getValue() + "\n");
+            }
+            fooWriter.close();
+
+            //updating the Request Table file with the assigned vehicles [writing the hash map into the file]
+            File myFoo2 = new File("data/RequestTable");
+            FileWriter fooWriter2 = new FileWriter(myFoo2, false); // true to append*/
+            for (Map.Entry<String, String> requestEntry : requestMap.entrySet()) {
+                //System.out.println(entry.getKey() + "," + entry.getValue() + "\n");
+                fooWriter2.write(requestEntry.getKey() + "," + requestEntry.getValue() + "\n");
+            }
+            fooWriter2.close();
         }
-
-
-        //updating the Emergency Vehicle File with the new availability [writing the Hash map into the file]
-        File myFoo = new File("data/EmergencyVehicle.txt");
-        FileWriter fooWriter = new FileWriter(myFoo, false); // true to append*/
-        for(Map.Entry<String, String> vehicleEntry : vehiclesMap.entrySet()) {
-            //System.out.println(entry.getKey() + "," + entry.getValue() + "\n");
-            fooWriter.write(vehicleEntry.getKey() + "," + vehicleEntry.getValue() + "\n");
-        }
-        fooWriter.close();
-
-        //updating the Request Table file with the assigned vehicles [writing the hash map into the file]
-        File myFoo2 = new File("data/RequestTable");
-        FileWriter fooWriter2 = new FileWriter(myFoo2, false); // true to append*/
-        for(Map.Entry<String, String> requestEntry : requestMap.entrySet()) {
-            //System.out.println(entry.getKey() + "," + entry.getValue() + "\n");
-            fooWriter2.write(requestEntry.getKey() + "," + requestEntry.getValue() + "\n");
-        }
-        fooWriter2.close();
     }
 
     public synchronized void completeRequest() throws IOException {
@@ -212,7 +212,10 @@ public class RequestHandler {
         System.out.printf("%1s  %15s   %15s   %15s   %15s   %15s%n", requestID, requestType, requestZipcode, nearestZipCode, dispatchedVehicle,distance);
     }
 
-    public void checkEmergency(Map<String,String> vehiclesMap, String requestZipcode,String requestType,boolean flag){
+    public boolean checkEmergency(Map<String,String> vehiclesMap, String requestZipcode,String requestType,boolean flag){
+        String dispatchedVehicle = "";
+        String nearestZipCode = "";
+        int distance = 0;
         for (Map.Entry<String, String> entry : vehiclesMap.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
@@ -220,9 +223,7 @@ public class RequestHandler {
             String vehicleType = linesplits[1];
             String vehicleZipCode = linesplits[0];
             String vehicleAvailability = linesplits[2];
-            String dispatchedVehicle = "";
-            String nearestZipCode = "";
-            int distance = 0;
+
             if (requestType.equals(vehicleType) && requestZipcode.equals(vehicleZipCode) && vehicleAvailability.equals("1")) {
                 //System.out.println("Dispatched Vehicle : " + key +" for Request ID : "+requestID);
                 dispatchedVehicle = key;
@@ -230,9 +231,10 @@ public class RequestHandler {
                 distance = 0;
                 //changing the availability to 0 once the request is processed
                 entry.setValue(vehicleZipCode + "," + vehicleType + ",0");
-                flag=true;
+                flag = true;
                 break;
             }
         }
+        return flag;
     }
 }
