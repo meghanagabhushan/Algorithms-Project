@@ -10,8 +10,6 @@ import java.util.*;
 public class RequestHandler {
 
 
-    private Map distance;
-
     public RequestHandler() throws IOException {
     }
 
